@@ -10,7 +10,7 @@ These reports help assess how much trust you can place in a given Linux distribu
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # 1. Clone and enter the repo
