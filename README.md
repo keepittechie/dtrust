@@ -1,12 +1,16 @@
 # DistroTrust (dtrust)
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
+![Python](https://img.shields.io/badge/python-3.8%2B-blue)
+![Make](https://img.shields.io/badge/build-make-lightgrey)
+
 DistroTrust is a tool for scanning a Linux root filesystem and collecting *trust signals*.  
 It generates structured JSON reports which can then be scored and rendered into readable Markdown or HTML.  
 These reports help assess how much trust you can place in a given Linux distribution or installation.
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ```bash
 # 1. Clone and enter the repo
@@ -22,7 +26,8 @@ python3 render_pretty.py --in build/tier2.json --out build/tier2_pretty.html --s
 
 # 4. Open the final report
 xdg-open build/tier2_pretty.html
-```
+````
+
 ---
 
 ## What it does
@@ -110,10 +115,3 @@ You can compare them with your own distribution scans.
 ## License
 
 Licensed under the [Apache License, Version 2.0](./LICENSE).
-
-```
-
----
-
-Would you like me to also add **badges** (build passing, license, etc.) at the top, so it looks more polished on GitHub?
-```
