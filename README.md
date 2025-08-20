@@ -4,9 +4,21 @@
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue)
 ![Make](https://img.shields.io/badge/build-make-lightgrey)
 
-DistroTrust is a tool for scanning a Linux root filesystem and collecting *trust signals*.  
-It generates structured JSON reports which can then be scored and rendered into readable Markdown or HTML.  
-These reports help assess how much trust you can place in a given Linux distribution or installation.
+# DistroTrust
+
+DistroTrust is a tool for scanning a Linux root filesystem and collecting trust signals. It generates structured JSON reports which can then be scored and rendered into readable Markdown or HTML. These reports help assess how much trust you can place in a given Linux distribution or installation.
+
+I originally created this project after releasing a review of **AnduinOS** that received negative community feedback. https://www.youtube.com/watch?v=G9fC_mS0g6I
+
+Some viewers expressed strong distrust toward the distro, suggesting it might contain spyware or hidden telemetry simply because it was built by a Chinese developer.  
+Comments included:  
+
+- *"I wonder if it is telemetry inside hidden? Just investigating to see if it's free from spy or spying?"*  
+- *"Oh please... do your research before posting a video like this. This distro is made by a Chinese guy who works for Microsoft in CHINESE. (It's a CHINESE DISTRO!!!)"*  
+- *"It's a one man distro and it's made by a young twenty something year old - There is no way in hell I would trust this guy OR this distro."*  
+
+Rather than speculate, I wanted a **technical way to measure trustworthiness**.  
+DistroTrust was built to provide that: a structured, reproducible scan of package sources, repository configurations, path collisions, and other signals that impact how much you can trust a Linux distribution.
 
 ---
 
