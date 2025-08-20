@@ -105,6 +105,55 @@ xdg-open build/tier2_pretty.html
 
 ---
 
+## Makefile Commands
+
+You can also run:
+
+```bash
+make
+```
+
+This is shorthand for generating reports defined in the **Makefile**.
+It automates validation, scoring, and rendering — so instead of multiple commands, you just run one.
+
+---
+
+## Example Output
+
+Here’s what a Tier 2 HTML report looks like:
+
+![screenshot of dtrust tier2 report](docs/screenshot_tier2.png)
+
+---
+
+## Contributing
+
+Contributions are welcome!
+
+1. Fork the repo
+2. Create a feature branch:
+
+   ```bash
+   git checkout -b feature/my-improvement
+   ```
+3. Make your changes
+4. Commit and push:
+
+   ```bash
+   git commit -m "Add my improvement"
+   git push origin feature/my-improvement
+   ```
+5. Open a Pull Request
+
+I definitely welcome:
+
+* New collectors for other distros.
+* Bug fixes in repo parsing.
+* Enhancements to the scoring model.
+* Documentation improvements.
+
+---
+
 ## Example Reports
 
 Sample Tier-2 reports are included under [`dtrust/examples`](./dtrust/examples) for Ubuntu, Rocky Linux, and AnduinOS.
