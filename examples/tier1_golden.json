@@ -1,0 +1,837 @@
+{
+  "schema_version": "1.0.0",
+  "tier": 1,
+  "timestamp_utc": "2025-08-19T18:09:54.975660+00:00",
+  "target_rootfs": "/",
+  "kernel": "4.4.0",
+  "distro": {
+    "id": "debian",
+    "name": "Debian GNU/Linux",
+    "version_id": "12",
+    "pretty_name": "Debian GNU/Linux 12 (bookworm)"
+  },
+  "users": [
+    {
+      "name": "root",
+      "uid": 0,
+      "gid": 0,
+      "home": "/root",
+      "shell": "/bin/bash"
+    },
+    {
+      "name": "daemon",
+      "uid": 1,
+      "gid": 1,
+      "home": "/usr/sbin",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "bin",
+      "uid": 2,
+      "gid": 2,
+      "home": "/bin",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "sys",
+      "uid": 3,
+      "gid": 3,
+      "home": "/dev",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "sync",
+      "uid": 4,
+      "gid": 65534,
+      "home": "/bin",
+      "shell": "/bin/sync"
+    },
+    {
+      "name": "games",
+      "uid": 5,
+      "gid": 60,
+      "home": "/usr/games",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "man",
+      "uid": 6,
+      "gid": 12,
+      "home": "/var/cache/man",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "lp",
+      "uid": 7,
+      "gid": 7,
+      "home": "/var/spool/lpd",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "mail",
+      "uid": 8,
+      "gid": 8,
+      "home": "/var/mail",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "news",
+      "uid": 9,
+      "gid": 9,
+      "home": "/var/spool/news",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "uucp",
+      "uid": 10,
+      "gid": 10,
+      "home": "/var/spool/uucp",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "proxy",
+      "uid": 13,
+      "gid": 13,
+      "home": "/bin",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "www-data",
+      "uid": 33,
+      "gid": 33,
+      "home": "/var/www",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "backup",
+      "uid": 34,
+      "gid": 34,
+      "home": "/var/backups",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "list",
+      "uid": 38,
+      "gid": 38,
+      "home": "/var/list",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "irc",
+      "uid": 39,
+      "gid": 39,
+      "home": "/run/ircd",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "_apt",
+      "uid": 42,
+      "gid": 65534,
+      "home": "/nonexistent",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "nobody",
+      "uid": 65534,
+      "gid": 65534,
+      "home": "/nonexistent",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "systemd-network",
+      "uid": 998,
+      "gid": 998,
+      "home": "/",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "systemd-timesync",
+      "uid": 997,
+      "gid": 997,
+      "home": "/",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "messagebus",
+      "uid": 100,
+      "gid": 102,
+      "home": "/nonexistent",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "polkitd",
+      "uid": 996,
+      "gid": 996,
+      "home": "/nonexistent",
+      "shell": "/usr/sbin/nologin"
+    },
+    {
+      "name": "sandbox",
+      "uid": 1000,
+      "gid": 1000,
+      "home": "/home/sandbox",
+      "shell": "/bin/bash"
+    }
+  ],
+  "groups": [
+    {
+      "name": "root",
+      "gid": 0,
+      "members": []
+    },
+    {
+      "name": "daemon",
+      "gid": 1,
+      "members": []
+    },
+    {
+      "name": "bin",
+      "gid": 2,
+      "members": []
+    },
+    {
+      "name": "sys",
+      "gid": 3,
+      "members": []
+    },
+    {
+      "name": "adm",
+      "gid": 4,
+      "members": []
+    },
+    {
+      "name": "tty",
+      "gid": 5,
+      "members": []
+    },
+    {
+      "name": "disk",
+      "gid": 6,
+      "members": []
+    },
+    {
+      "name": "lp",
+      "gid": 7,
+      "members": []
+    },
+    {
+      "name": "mail",
+      "gid": 8,
+      "members": []
+    },
+    {
+      "name": "news",
+      "gid": 9,
+      "members": []
+    },
+    {
+      "name": "uucp",
+      "gid": 10,
+      "members": []
+    },
+    {
+      "name": "man",
+      "gid": 12,
+      "members": []
+    },
+    {
+      "name": "proxy",
+      "gid": 13,
+      "members": []
+    },
+    {
+      "name": "kmem",
+      "gid": 15,
+      "members": []
+    },
+    {
+      "name": "dialout",
+      "gid": 20,
+      "members": []
+    },
+    {
+      "name": "fax",
+      "gid": 21,
+      "members": []
+    },
+    {
+      "name": "voice",
+      "gid": 22,
+      "members": []
+    },
+    {
+      "name": "cdrom",
+      "gid": 24,
+      "members": []
+    },
+    {
+      "name": "floppy",
+      "gid": 25,
+      "members": []
+    },
+    {
+      "name": "tape",
+      "gid": 26,
+      "members": []
+    },
+    {
+      "name": "sudo",
+      "gid": 27,
+      "members": []
+    },
+    {
+      "name": "audio",
+      "gid": 29,
+      "members": []
+    },
+    {
+      "name": "dip",
+      "gid": 30,
+      "members": []
+    },
+    {
+      "name": "www-data",
+      "gid": 33,
+      "members": []
+    },
+    {
+      "name": "backup",
+      "gid": 34,
+      "members": []
+    },
+    {
+      "name": "operator",
+      "gid": 37,
+      "members": []
+    },
+    {
+      "name": "list",
+      "gid": 38,
+      "members": []
+    },
+    {
+      "name": "irc",
+      "gid": 39,
+      "members": []
+    },
+    {
+      "name": "src",
+      "gid": 40,
+      "members": []
+    },
+    {
+      "name": "shadow",
+      "gid": 42,
+      "members": []
+    },
+    {
+      "name": "utmp",
+      "gid": 43,
+      "members": []
+    },
+    {
+      "name": "video",
+      "gid": 44,
+      "members": []
+    },
+    {
+      "name": "sasl",
+      "gid": 45,
+      "members": []
+    },
+    {
+      "name": "plugdev",
+      "gid": 46,
+      "members": []
+    },
+    {
+      "name": "staff",
+      "gid": 50,
+      "members": []
+    },
+    {
+      "name": "games",
+      "gid": 60,
+      "members": []
+    },
+    {
+      "name": "users",
+      "gid": 100,
+      "members": [
+        "sandbox"
+      ]
+    },
+    {
+      "name": "nogroup",
+      "gid": 65534,
+      "members": []
+    },
+    {
+      "name": "_ssh",
+      "gid": 101,
+      "members": []
+    },
+    {
+      "name": "systemd-journal",
+      "gid": 999,
+      "members": []
+    },
+    {
+      "name": "systemd-network",
+      "gid": 998,
+      "members": []
+    },
+    {
+      "name": "systemd-timesync",
+      "gid": 997,
+      "members": []
+    },
+    {
+      "name": "messagebus",
+      "gid": 102,
+      "members": []
+    },
+    {
+      "name": "polkitd",
+      "gid": 996,
+      "members": []
+    },
+    {
+      "name": "sandbox",
+      "gid": 1000,
+      "members": []
+    }
+  ],
+  "cron": {
+    "system_crontab": null,
+    "cron_d_files": [
+      "e2scrub_all"
+    ],
+    "cron_dirs": {
+      "cron.daily": [
+        "apt-compat",
+        "dpkg"
+      ]
+    }
+  },
+  "suid_sgid": [
+    {
+      "path": "/bin/expiry",
+      "mode_octal": "0o2755",
+      "suid": false,
+      "sgid": true
+    },
+    {
+      "path": "/bin/gpasswd",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/bin/ssh-agent",
+      "mode_octal": "0o2755",
+      "suid": false,
+      "sgid": true
+    },
+    {
+      "path": "/bin/chage",
+      "mode_octal": "0o2755",
+      "suid": false,
+      "sgid": true
+    },
+    {
+      "path": "/bin/passwd",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/bin/newgrp",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/bin/chfn",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/bin/chsh",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/bin/mount",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/bin/su",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/bin/sudo",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/bin/umount",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/sbin/unix_chkpwd",
+      "mode_octal": "0o2755",
+      "suid": false,
+      "sgid": true
+    },
+    {
+      "path": "/usr/bin/expiry",
+      "mode_octal": "0o2755",
+      "suid": false,
+      "sgid": true
+    },
+    {
+      "path": "/usr/bin/gpasswd",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/usr/bin/ssh-agent",
+      "mode_octal": "0o2755",
+      "suid": false,
+      "sgid": true
+    },
+    {
+      "path": "/usr/bin/chage",
+      "mode_octal": "0o2755",
+      "suid": false,
+      "sgid": true
+    },
+    {
+      "path": "/usr/bin/passwd",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/usr/bin/newgrp",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/usr/bin/chfn",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/usr/bin/chsh",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/usr/bin/mount",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/usr/bin/su",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/usr/bin/sudo",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/usr/bin/umount",
+      "mode_octal": "0o4755",
+      "suid": true,
+      "sgid": false
+    },
+    {
+      "path": "/usr/sbin/unix_chkpwd",
+      "mode_octal": "0o2755",
+      "suid": false,
+      "sgid": true
+    }
+  ],
+  "services": [
+    "etc/systemd/system/dbus-org.freedesktop.timesync1.service",
+    "etc/systemd/system/getty.target.wants/getty@tty1.service",
+    "etc/systemd/system/multi-user.target.wants/e2scrub_reap.service",
+    "etc/systemd/system/sysinit.target.wants/systemd-pstore.service",
+    "etc/systemd/system/sysinit.target.wants/systemd-timesyncd.service",
+    "usr/lib/systemd/system/apt-daily-upgrade.service",
+    "usr/lib/systemd/system/apt-daily.service",
+    "usr/lib/systemd/system/autovt@.service",
+    "usr/lib/systemd/system/console-getty.service",
+    "usr/lib/systemd/system/container-getty@.service",
+    "usr/lib/systemd/system/cryptdisks-early.service",
+    "usr/lib/systemd/system/cryptdisks.service",
+    "usr/lib/systemd/system/dbus-org.freedesktop.hostname1.service",
+    "usr/lib/systemd/system/dbus-org.freedesktop.locale1.service",
+    "usr/lib/systemd/system/dbus-org.freedesktop.login1.service",
+    "usr/lib/systemd/system/dbus-org.freedesktop.timedate1.service",
+    "usr/lib/systemd/system/dbus.service",
+    "usr/lib/systemd/system/debug-shell.service",
+    "usr/lib/systemd/system/dpkg-db-backup.service",
+    "usr/lib/systemd/system/e2scrub@.service",
+    "usr/lib/systemd/system/e2scrub_all.service",
+    "usr/lib/systemd/system/e2scrub_fail@.service",
+    "usr/lib/systemd/system/e2scrub_reap.service",
+    "usr/lib/systemd/system/emergency.service",
+    "usr/lib/systemd/system/fstrim.service",
+    "usr/lib/systemd/system/getty-static.service",
+    "usr/lib/systemd/system/getty.target.wants/getty-static.service",
+    "usr/lib/systemd/system/getty@.service",
+    "usr/lib/systemd/system/graphical.target.wants/systemd-update-utmp-runlevel.service",
+    "usr/lib/systemd/system/hwclock.service",
+    "usr/lib/systemd/system/initrd-cleanup.service",
+    "usr/lib/systemd/system/initrd-parse-etc.service",
+    "usr/lib/systemd/system/initrd-root-fs.target.wants/systemd-repart.service",
+    "usr/lib/systemd/system/initrd-switch-root.service",
+    "usr/lib/systemd/system/initrd-udevadm-cleanup-db.service",
+    "usr/lib/systemd/system/initrd.target.wants/systemd-pcrphase-initrd.service",
+    "usr/lib/systemd/system/kmod-static-nodes.service",
+    "usr/lib/systemd/system/kmod.service",
+    "usr/lib/systemd/system/modprobe@.service",
+    "usr/lib/systemd/system/multi-user.target.wants/dbus.service",
+    "usr/lib/systemd/system/multi-user.target.wants/systemd-logind.service",
+    "usr/lib/systemd/system/multi-user.target.wants/systemd-update-utmp-runlevel.service",
+    "usr/lib/systemd/system/multi-user.target.wants/systemd-user-sessions.service",
+    "usr/lib/systemd/system/packagekit-offline-update.service",
+    "usr/lib/systemd/system/packagekit.service",
+    "usr/lib/systemd/system/pam_namespace.service",
+    "usr/lib/systemd/system/polkit.service",
+    "usr/lib/systemd/system/procps.service",
+    "usr/lib/systemd/system/quotaon.service",
+    "usr/lib/systemd/system/rc-local.service",
+    "usr/lib/systemd/system/rc.service",
+    "usr/lib/systemd/system/rcS.service",
+    "usr/lib/systemd/system/rescue.service",
+    "usr/lib/systemd/system/rescue.target.wants/systemd-update-utmp-runlevel.service",
+    "usr/lib/systemd/system/serial-getty@.service",
+    "usr/lib/systemd/system/sudo.service",
+    "usr/lib/systemd/system/sysinit.target.wants/kmod-static-nodes.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-binfmt.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-firstboot.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-journal-flush.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-journald.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-machine-id-commit.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-modules-load.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-pcrphase-sysinit.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-pcrphase.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-random-seed.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-repart.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-sysctl.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-sysusers.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup-dev.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup.service",
+    "usr/lib/systemd/system/sysinit.target.wants/systemd-update-utmp.service",
+    "usr/lib/systemd/system/system-update-cleanup.service",
+    "usr/lib/systemd/system/system-update.target.wants/packagekit-offline-update.service",
+    "usr/lib/systemd/system/systemd-ask-password-console.service",
+    "usr/lib/systemd/system/systemd-ask-password-wall.service",
+    "usr/lib/systemd/system/systemd-backlight@.service",
+    "usr/lib/systemd/system/systemd-binfmt.service",
+    "usr/lib/systemd/system/systemd-boot-check-no-failures.service",
+    "usr/lib/systemd/system/systemd-exit.service",
+    "usr/lib/systemd/system/systemd-firstboot.service",
+    "usr/lib/systemd/system/systemd-fsck-root.service",
+    "usr/lib/systemd/system/systemd-fsck@.service",
+    "usr/lib/systemd/system/systemd-fsckd.service",
+    "usr/lib/systemd/system/systemd-halt.service",
+    "usr/lib/systemd/system/systemd-hibernate-resume@.service",
+    "usr/lib/systemd/system/systemd-hibernate.service",
+    "usr/lib/systemd/system/systemd-hostnamed.service",
+    "usr/lib/systemd/system/systemd-hybrid-sleep.service",
+    "usr/lib/systemd/system/systemd-initctl.service",
+    "usr/lib/systemd/system/systemd-journal-flush.service",
+    "usr/lib/systemd/system/systemd-journald.service",
+    "usr/lib/systemd/system/systemd-journald@.service",
+    "usr/lib/systemd/system/systemd-kexec.service",
+    "usr/lib/systemd/system/systemd-localed.service",
+    "usr/lib/systemd/system/systemd-logind.service",
+    "usr/lib/systemd/system/systemd-machine-id-commit.service",
+    "usr/lib/systemd/system/systemd-modules-load.service",
+    "usr/lib/systemd/system/systemd-network-generator.service",
+    "usr/lib/systemd/system/systemd-networkd-wait-online.service",
+    "usr/lib/systemd/system/systemd-networkd-wait-online@.service",
+    "usr/lib/systemd/system/systemd-networkd.service",
+    "usr/lib/systemd/system/systemd-pcrphase-initrd.service",
+    "usr/lib/systemd/system/systemd-pcrphase-sysinit.service",
+    "usr/lib/systemd/system/systemd-pcrphase.service",
+    "usr/lib/systemd/system/systemd-poweroff.service",
+    "usr/lib/systemd/system/systemd-pstore.service",
+    "usr/lib/systemd/system/systemd-quotacheck.service",
+    "usr/lib/systemd/system/systemd-random-seed.service",
+    "usr/lib/systemd/system/systemd-reboot.service",
+    "usr/lib/systemd/system/systemd-remount-fs.service",
+    "usr/lib/systemd/system/systemd-repart.service",
+    "usr/lib/systemd/system/systemd-rfkill.service",
+    "usr/lib/systemd/system/systemd-suspend-then-hibernate.service",
+    "usr/lib/systemd/system/systemd-suspend.service",
+    "usr/lib/systemd/system/systemd-sysctl.service",
+    "usr/lib/systemd/system/systemd-sysext.service",
+    "usr/lib/systemd/system/systemd-sysusers.service",
+    "usr/lib/systemd/system/systemd-time-wait-sync.service",
+    "usr/lib/systemd/system/systemd-timedated.service",
+    "usr/lib/systemd/system/systemd-timesyncd.service",
+    "usr/lib/systemd/system/systemd-tmpfiles-clean.service",
+    "usr/lib/systemd/system/systemd-tmpfiles-setup-dev.service",
+    "usr/lib/systemd/system/systemd-tmpfiles-setup.service",
+    "usr/lib/systemd/system/systemd-update-utmp-runlevel.service",
+    "usr/lib/systemd/system/systemd-update-utmp.service",
+    "usr/lib/systemd/system/systemd-user-sessions.service",
+    "usr/lib/systemd/system/systemd-volatile-root.service",
+    "usr/lib/systemd/system/user-runtime-dir@.service",
+    "usr/lib/systemd/system/user@.service",
+    "usr/lib/systemd/system/x11-common.service",
+    "lib/systemd/system/apt-daily-upgrade.service",
+    "lib/systemd/system/apt-daily.service",
+    "lib/systemd/system/autovt@.service",
+    "lib/systemd/system/console-getty.service",
+    "lib/systemd/system/container-getty@.service",
+    "lib/systemd/system/cryptdisks-early.service",
+    "lib/systemd/system/cryptdisks.service",
+    "lib/systemd/system/dbus-org.freedesktop.hostname1.service",
+    "lib/systemd/system/dbus-org.freedesktop.locale1.service",
+    "lib/systemd/system/dbus-org.freedesktop.login1.service",
+    "lib/systemd/system/dbus-org.freedesktop.timedate1.service",
+    "lib/systemd/system/dbus.service",
+    "lib/systemd/system/debug-shell.service",
+    "lib/systemd/system/dpkg-db-backup.service",
+    "lib/systemd/system/e2scrub@.service",
+    "lib/systemd/system/e2scrub_all.service",
+    "lib/systemd/system/e2scrub_fail@.service",
+    "lib/systemd/system/e2scrub_reap.service",
+    "lib/systemd/system/emergency.service",
+    "lib/systemd/system/fstrim.service",
+    "lib/systemd/system/getty-static.service",
+    "lib/systemd/system/getty.target.wants/getty-static.service",
+    "lib/systemd/system/getty@.service",
+    "lib/systemd/system/graphical.target.wants/systemd-update-utmp-runlevel.service",
+    "lib/systemd/system/hwclock.service",
+    "lib/systemd/system/initrd-cleanup.service",
+    "lib/systemd/system/initrd-parse-etc.service",
+    "lib/systemd/system/initrd-root-fs.target.wants/systemd-repart.service",
+    "lib/systemd/system/initrd-switch-root.service",
+    "lib/systemd/system/initrd-udevadm-cleanup-db.service",
+    "lib/systemd/system/initrd.target.wants/systemd-pcrphase-initrd.service",
+    "lib/systemd/system/kmod-static-nodes.service",
+    "lib/systemd/system/kmod.service",
+    "lib/systemd/system/modprobe@.service",
+    "lib/systemd/system/multi-user.target.wants/dbus.service",
+    "lib/systemd/system/multi-user.target.wants/systemd-logind.service",
+    "lib/systemd/system/multi-user.target.wants/systemd-update-utmp-runlevel.service",
+    "lib/systemd/system/multi-user.target.wants/systemd-user-sessions.service",
+    "lib/systemd/system/packagekit-offline-update.service",
+    "lib/systemd/system/packagekit.service",
+    "lib/systemd/system/pam_namespace.service",
+    "lib/systemd/system/polkit.service",
+    "lib/systemd/system/procps.service",
+    "lib/systemd/system/quotaon.service",
+    "lib/systemd/system/rc-local.service",
+    "lib/systemd/system/rc.service",
+    "lib/systemd/system/rcS.service",
+    "lib/systemd/system/rescue.service",
+    "lib/systemd/system/rescue.target.wants/systemd-update-utmp-runlevel.service",
+    "lib/systemd/system/serial-getty@.service",
+    "lib/systemd/system/sudo.service",
+    "lib/systemd/system/sysinit.target.wants/kmod-static-nodes.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-binfmt.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-firstboot.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-journal-flush.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-journald.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-machine-id-commit.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-modules-load.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-pcrphase-sysinit.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-pcrphase.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-random-seed.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-repart.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-sysctl.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-sysusers.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup-dev.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup.service",
+    "lib/systemd/system/sysinit.target.wants/systemd-update-utmp.service",
+    "lib/systemd/system/system-update-cleanup.service",
+    "lib/systemd/system/system-update.target.wants/packagekit-offline-update.service",
+    "lib/systemd/system/systemd-ask-password-console.service",
+    "lib/systemd/system/systemd-ask-password-wall.service",
+    "lib/systemd/system/systemd-backlight@.service",
+    "lib/systemd/system/systemd-binfmt.service",
+    "lib/systemd/system/systemd-boot-check-no-failures.service",
+    "lib/systemd/system/systemd-exit.service",
+    "lib/systemd/system/systemd-firstboot.service",
+    "lib/systemd/system/systemd-fsck-root.service",
+    "lib/systemd/system/systemd-fsck@.service",
+    "lib/systemd/system/systemd-fsckd.service",
+    "lib/systemd/system/systemd-halt.service",
+    "lib/systemd/system/systemd-hibernate-resume@.service",
+    "lib/systemd/system/systemd-hibernate.service",
+    "lib/systemd/system/systemd-hostnamed.service",
+    "lib/systemd/system/systemd-hybrid-sleep.service",
+    "lib/systemd/system/systemd-initctl.service",
+    "lib/systemd/system/systemd-journal-flush.service",
+    "lib/systemd/system/systemd-journald.service",
+    "lib/systemd/system/systemd-journald@.service",
+    "lib/systemd/system/systemd-kexec.service",
+    "lib/systemd/system/systemd-localed.service",
+    "lib/systemd/system/systemd-logind.service",
+    "lib/systemd/system/systemd-machine-id-commit.service",
+    "lib/systemd/system/systemd-modules-load.service",
+    "lib/systemd/system/systemd-network-generator.service",
+    "lib/systemd/system/systemd-networkd-wait-online.service",
+    "lib/systemd/system/systemd-networkd-wait-online@.service",
+    "lib/systemd/system/systemd-networkd.service",
+    "lib/systemd/system/systemd-pcrphase-initrd.service",
+    "lib/systemd/system/systemd-pcrphase-sysinit.service",
+    "lib/systemd/system/systemd-pcrphase.service",
+    "lib/systemd/system/systemd-poweroff.service",
+    "lib/systemd/system/systemd-pstore.service",
+    "lib/systemd/system/systemd-quotacheck.service",
+    "lib/systemd/system/systemd-random-seed.service",
+    "lib/systemd/system/systemd-reboot.service",
+    "lib/systemd/system/systemd-remount-fs.service",
+    "lib/systemd/system/systemd-repart.service",
+    "lib/systemd/system/systemd-rfkill.service",
+    "lib/systemd/system/systemd-suspend-then-hibernate.service",
+    "lib/systemd/system/systemd-suspend.service",
+    "lib/systemd/system/systemd-sysctl.service",
+    "lib/systemd/system/systemd-sysext.service",
+    "lib/systemd/system/systemd-sysusers.service",
+    "lib/systemd/system/systemd-time-wait-sync.service",
+    "lib/systemd/system/systemd-timedated.service",
+    "lib/systemd/system/systemd-timesyncd.service",
+    "lib/systemd/system/systemd-tmpfiles-clean.service",
+    "lib/systemd/system/systemd-tmpfiles-setup-dev.service",
+    "lib/systemd/system/systemd-tmpfiles-setup.service",
+    "lib/systemd/system/systemd-update-utmp-runlevel.service",
+    "lib/systemd/system/systemd-update-utmp.service",
+    "lib/systemd/system/systemd-user-sessions.service",
+    "lib/systemd/system/systemd-volatile-root.service",
+    "lib/systemd/system/user-runtime-dir@.service",
+    "lib/systemd/system/user@.service",
+    "lib/systemd/system/x11-common.service"
+  ],
+  "limits": {
+    "time_remaining_seconds": 9.67
+  }
+}

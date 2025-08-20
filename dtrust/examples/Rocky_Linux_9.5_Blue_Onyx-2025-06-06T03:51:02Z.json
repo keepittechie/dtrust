@@ -1,0 +1,8 @@
+{
+  "distro": "Rocky Linux 9.5 (Blue Onyx)",
+  "hostname": "localhost.localdomain",
+  "timestamp": "2025-06-06T03:51:02Z",
+  "tier": 2,
+  "unsigned_packages": ["/etc/yum.repos.d/rocky.repo"],
+  "third_party_repos": [""]
+}

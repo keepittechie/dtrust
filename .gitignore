@@ -1,0 +1,11 @@
+# Build artifacts
+/build/
+__pycache__/
+*.pyc
+
+# Backups & patches
+*.bak
+*.patch
+
+# Local profiles/reports
+dtrust/profiles/*.json

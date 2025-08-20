@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>dtrust Report</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    .score { font-size: 1.5em; font-weight: bold; margin-bottom: 1em; }
+    .section { margin-top: 2em; }
+    details { margin-bottom: 1em; }
+  </style>
+</head>
+<body>
+  <h1>dtrust Report (Tier {{ report.tier }})</h1>
+  <div class="score">Score: {{ score.score }}/100</div>
+  <div>
+    <h2>Metadata</h2>
+    <ul>
+      <li>Schema: {{ report.schema_version }}</li>
+      <li>Timestamp: {{ report.timestamp_utc }}</li>
+      <li>Target rootfs: {{ report.target_rootfs }}</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Signals</h2>
+    <pre>{{ score.signals | tojson(indent=2) }}</pre>
+  </div>
+
+  <div class="section">
+    <h2>Penalties</h2>
+    <ul>
+    {% for p in score.penalties %}
+      <li>{{ p.reason }} → {{ p.value }}</li>
+    {% endfor %}
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Report JSON</h2>
+    <details open>
+      <summary>Expand full JSON</summary>
+      <pre>{{ report | tojson(indent=2) }}</pre>
+    </details>
+  </div>
+</body>
+</html>

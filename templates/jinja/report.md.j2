@@ -1,0 +1,22 @@
+# dtrust Report (Tier {{ report.tier }})
+
+**Score:** {{ score.score }}/100
+
+## Metadata
+- Schema: {{ report.schema_version }}
+- Timestamp: {{ report.timestamp_utc }}
+- Target rootfs: {{ report.target_rootfs }}
+
+## Signals
+```json
+{{ score.signals | tojson(indent=2) }}
+```
+
+## Penalties
+{% for p in score.penalties %}- {{ p.reason }} → {{ p.value }}
+{% endfor %}
+
+## Report JSON
+```json
+{{ report | tojson(indent=2) }}
+```

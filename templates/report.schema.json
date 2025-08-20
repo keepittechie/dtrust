@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "dtrust Tier-1 Report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "tier",
+    "timestamp_utc",
+    "target_rootfs",
+    "distro",
+    "users",
+    "cron",
+    "suid_sgid"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "tier": {
+      "type": "integer",
+      "const": 1
+    },
+    "timestamp_utc": {
+      "type": "string"
+    },
+    "target_rootfs": {
+      "type": "string"
+    },
+    "kernel": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "distro": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "version_id",
+        "pretty_name"
+      ],
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pretty_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "users": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "uid",
+          "gid",
+          "home",
+          "shell"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "uid": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "gid": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "home": {
+            "type": "string"
+          },
+          "shell": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "gid",
+          "members"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "gid": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "cron": {
+      "type": "object",
+      "required": [
+        "system_crontab",
+        "cron_d_files",
+        "cron_dirs"
+      ],
+      "properties": {
+        "system_crontab": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cron_d_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cron_dirs": {
+          "type": "object"
+        }
+      }
+    },
+    "suid_sgid": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "mode_octal",
+          "suid",
+          "sgid"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "mode_octal": {
+            "type": "string"
+          },
+          "suid": {
+            "type": "boolean"
+          },
+          "sgid": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limits": {
+      "type": "object"
+    }
+  }
+}

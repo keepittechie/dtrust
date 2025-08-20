@@ -1,0 +1,8 @@
+{
+  "distro": "Ubuntu 24.04.2 LTS",
+  "hostname": "ubs24",
+  "timestamp": "2025-06-06T02:55:16Z",
+  "tier": 2,
+  "unsigned_packages": [""],
+  "third_party_repos": [""]
+}

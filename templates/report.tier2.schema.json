@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "dtrust Tier-2 Report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "tier",
+    "timestamp_utc",
+    "target_rootfs",
+    "repos",
+    "path_shadowing",
+    "manual_areas"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "tier": {
+      "type": "integer",
+      "const": 2
+    },
+    "timestamp_utc": {
+      "type": "string"
+    },
+    "target_rootfs": {
+      "type": "string"
+    },
+    "repos": {
+      "type": "object",
+      "properties": {
+        "apt": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "lines": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "yum_dnf": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "pacman": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "servers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "content": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "path_shadowing": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "manual_areas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "dir",
+          "entries"
+        ],
+        "properties": {
+          "dir": {
+            "type": "string"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
