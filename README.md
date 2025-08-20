@@ -8,7 +8,7 @@
 
 DistroTrust is a tool for scanning a Linux root filesystem and collecting trust signals. It generates structured JSON reports which can then be scored and rendered into readable Markdown or HTML. These reports help assess how much trust you can place in a given Linux distribution or installation.
 
-I originally created this project after releasing a review of **AnduinOS** that received negative community feedback. https://www.youtube.com/watch?v=G9fC_mS0g6I
+I originally created this project after releasing a review of [`**AnduinOS**`](https://github.com/Anduin2017/AnduinOS) that received negative community feedback. This the video: https://www.youtube.com/watch?v=G9fC_mS0g6I
 
 Some viewers expressed strong distrust toward the distro, suggesting it might contain spyware or hidden telemetry simply because it was built by a Chinese developer.  
 Comments included:  
