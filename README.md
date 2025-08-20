@@ -161,6 +161,36 @@ You can compare them with your own distribution scans.
 
 ---
 
+## Project Structure
+
+```
+.
+├── build/                  # Generated reports (JSON, HTML, Markdown, scores) – not tracked in git
+├── docs/                   # Documentation (schemas, guides)
+├── examples/               # Golden examples and sample outputs for testing
+├── scripts/                # Validation and helper scripts
+├── templates/              # Report schemas, scoring rules, Jinja2 templates
+├── dtrust_cli.py           # Main CLI entry point
+├── render_pretty.py        # Converts raw reports to formatted HTML
+├── render_jinja.py         # Jinja2 renderer (HTML/Markdown support)
+├── render_report.py        # Alternative renderer for reports
+├── score-dtrust-report.py  # Scoring logic for reports
+├── Makefile                # Common tasks (build, test, clean)
+├── README.md               # Project overview and usage guide
+└── TODO.md                 # Notes and roadmap items
+```
+
+### Key Files
+
+* **`dtrust_cli.py`** → Main CLI tool for generating Tier 1/2+ reports.
+* **`render_pretty.py`** → Pretty-prints Tier 2 reports into HTML.
+* **`score-dtrust-report.py`** → Applies scoring rules to generated reports.
+* **`Makefile`** → Provides shortcuts (`make build`, `make test`, etc.).
+* **`examples/`** → Known-good reports for regression testing.
+* **`templates/`** → JSON schemas, scoring YAML, and HTML/Markdown templates.
+
+---
+
 ## License
 
 Licensed under the [Apache License, Version 2.0](./LICENSE).
