@@ -22,7 +22,7 @@ python3 render_pretty.py --in build/tier2.json --out build/tier2_pretty.html --s
 
 # 4. Open the final report
 xdg-open build/tier2_pretty.html
-
+```
 ---
 
 ## What it does
