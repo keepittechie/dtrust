@@ -1,7 +1,41 @@
 #!/usr/bin/env python3
 import sys, os, json, time, glob, platform
+import re
 from datetime import datetime, timezone
 from pathlib import Path
+import hashlib, stat
+from typing import Optional, Tuple
+
+def sha256_file(p: Path) -> Optional[str]:
+    try:
+        h = hashlib.sha256()
+        with p.open("rb") as f:
+            for chunk in iter(lambda: f.read(1024 * 1024), b""):
+                h.update(chunk)
+        return h.hexdigest()
+    except Exception:
+        return None
+
+def is_elf(p: Path) -> bool:
+    try:
+        with p.open("rb") as f:
+            return f.read(4) == b"\x7fELF"
+    except Exception:
+        return False
+
+def file_mode_owner(p: Path) -> Tuple[str, str]:
+    try:
+        st = p.stat()
+        mode = stat.S_IMODE(st.st_mode)
+        mode_str = f"{mode:04o}"
+        try:
+            import pwd, grp
+            owner = f"{pwd.getpwuid(st.st_uid).pw_name}:{grp.getgrgid(st.st_gid).gr_name}"
+        except Exception:
+            owner = f"{st.st_uid}:{st.st_gid}"
+        return mode_str, owner
+    except Exception:
+        return "0000", "?:?"
 
 SCHEMA_VERSION = "1.0.0"
 
@@ -29,6 +63,19 @@ def collect_system_info(rootfs="/"):
         }
     }
 
+def collect_unsigned_packages(root: Path):
+    """
+    Tries to call your existing unsigned-package collector if present,
+    otherwise returns [] safely so reports still render.
+    """
+    try:
+        # if you have a module, e.g., dtrust/pkg_unsigned.py with collect(root: Path)
+        from dtrust import pkg_unsigned  # adapt if your module path differs
+        return pkg_unsigned.collect(root)
+    except Exception:
+        return []
+
+
 def read_text(p: Path) -> str:
     try:
         return Path(p).read_text(encoding="utf-8")
@@ -36,30 +83,78 @@ def read_text(p: Path) -> str:
         return ""
 
 def gather_pkg_repos(root: Path):
-    """Collect APT and YUM/DNF repo info. (Pacman handled separately.)"""
+    """Collect normalized repo data for APT and YUM/DNF. (Pacman handled separately.)"""
     repos = {"apt": [], "yum_dnf": []}
 
-    # APT
+    # --- APT ---
     sources_list = root / "etc" / "apt" / "sources.list"
     sources_d = root / "etc" / "apt" / "sources.list.d"
-    t = read_text(sources_list)
-    if t:
-        lines = [ln for ln in t.splitlines() if ln.strip() and not ln.strip().startswith("#")]
-        repos["apt"].append({"file": str(sources_list), "lines": lines})
-    if sources_d.exists() and sources_d.is_dir():
-        for f in sorted(sources_d.iterdir()):
-            if f.is_file():
-                tt = read_text(f) or ""
-                lines = [ln for ln in tt.splitlines() if ln.strip() and not ln.strip().startswith("#")]
-                repos["apt"].append({"file": str(f), "lines": lines})
+    line_re = re.compile(r"^\s*deb(-src)?\s+(\[[^\]]+\]\s+)?(\S+)\s+(\S+)\s+(.*)$")
 
-    # YUM/DNF
+    def _parse_apt_file(f: Path):
+        t = read_text(f) or ""
+        for line in t.splitlines():
+            if not line.strip() or line.strip().startswith("#"):
+                continue
+            m = line_re.match(line)
+            if not m:
+                continue
+            is_src = bool(m.group(1))
+            opts = (m.group(2) or "").strip()
+            url = m.group(3); suite = m.group(4)
+            comps = (m.group(5) or "").split()
+            repos["apt"].append({
+                "file": str(f),
+                "name": f"{suite}{'-src' if is_src else ''}",
+                "enabled": True,            # non-commented line
+                "baseurl": url,
+                "mirrorlist": None,
+                "gpgcheck": True,           # apt verifies by default w/ keyrings
+                "gpgkey_files": [],         # apt keyrings are system-managed
+                "components": comps,
+                "options": opts,
+            })
+
+    if sources_list.exists():
+        _parse_apt_file(sources_list)
+    if sources_d.exists() and sources_d.is_dir():
+        for f in sorted(sources_d.glob("*.list")):
+            _parse_apt_file(f)
+
+    # --- YUM/DNF ---
     yumdir = root / "etc" / "yum.repos.d"
     if yumdir.exists() and yumdir.is_dir():
-        for f in sorted(yumdir.iterdir()):
-            if f.is_file() and f.suffix == ".repo":
-                tt = read_text(f) or ""
-                repos["yum_dnf"].append({"file": str(f), "content": tt})
+        for f in sorted(yumdir.glob("*.repo")):
+            body = read_text(f) or ""
+            # split on [section]
+            parts = re.split(r"\n\[(.+?)\]\s*\n", "\n"+body)
+            for i in range(1, len(parts), 2):
+                name = parts[i].strip()
+                section = parts[i+1]
+                def get(k, default=None):
+                    m = re.search(rf"^{k}\s*=\s*(.+)$", section, re.M|re.I)
+                    return (m.group(1).strip() if m else default)
+                enabled = (get("enabled","1") == "1")
+                gpgcheck = (get("gpgcheck","1") == "1")
+                baseurl = get("baseurl")
+                mirrorlist = get("mirrorlist")
+                gpgkey = get("gpgkey") or ""
+                gpgkey_files = []
+                if gpgkey:
+                    for part in re.split(r"[\s,]+", gpgkey.strip()):
+                        if part.startswith("file:"):
+                            p = part.replace("file://","file:").replace("file:","")
+                            if p:
+                                gpgkey_files.append(p)
+                repos["yum_dnf"].append({
+                    "file": str(f),
+                    "name": name,
+                    "enabled": enabled,
+                    "baseurl": baseurl,
+                    "mirrorlist": mirrorlist,
+                    "gpgcheck": gpgcheck,
+                    "gpgkey_files": gpgkey_files
+                })
 
     return repos
 
@@ -123,18 +218,14 @@ def gather_pacman_repos(root: Path):
     return out
 
 def list_path_shadowing(root: Path):
-    """Count only meaningful collisions:
-       - Different real (st_dev, st_ino), AND
-       - At least one path is outside /usr/bin|/usr/sbin, OR
-         the files differ by size.
-    """
-    paths = [
-        root/"bin", root/"sbin",
-        root/"usr"/"bin", root/"usr"/"sbin",
-        root/"usr"/"local"/"bin", root/"usr"/"local"/"sbin",
+    """Return entries with first_hit vs shadowed + sha256 for each."""
+    path_dirs = [
+        root/"usr"/"local"/"sbin", root/"usr"/"local"/"bin",
+        root/"usr"/"sbin", root/"usr"/"bin",
+        root/"sbin", root/"bin",
     ]
     by_name = {}
-    for base in paths:
+    for base in path_dirs:
         if not base.exists():
             continue
         try:
@@ -144,95 +235,132 @@ def list_path_shadowing(root: Path):
         except Exception:
             continue
 
-    def real_stat(p: Path):
-        try:
-            rp = Path(os.path.realpath(p)); st = rp.stat()
-            return rp, int(st.st_dev), int(st.st_ino), int(st.st_size)
-        except Exception:
-            return p, None, None, None
-
-    shadows = {}
+    results = []
     for name, plist in by_name.items():
-        info = [real_stat(p) for p in plist]
-        buckets = {}
-        for rp, dev, ino, sz in info:
-            buckets.setdefault((dev, ino), []).append((rp, sz))
-        buckets.pop((None, None), None)
-        if len(buckets) <= 1:
+        # remove exact same real file duplicates
+        uniq = []
+        seen = set()
+        for p in plist:
+            rp = Path(os.path.realpath(p))
+            try:
+                st = rp.stat()
+                key = (int(st.st_dev), int(st.st_ino))
+            except Exception:
+                key = (str(rp), None)
+            if key in seen:
+                continue
+            seen.add(key)
+            uniq.append(rp)
+        if len(uniq) <= 1:
             continue
+        first = uniq[0]
+        shadowed = uniq[1:]
+        results.append({
+            "basename": name,
+            "first_hit": str(first),
+            "shadowed": [str(x) for x in shadowed],
+            "first_hit_sha256": sha256_file(first),
+            "shadowed_sha256": [sha256_file(x) for x in shadowed],
+        })
+    return results
 
-        # If all under /usr/bin or /usr/sbin and sizes match, ignore (normal dupes)
-        all_usr = True
-        sizes = set()
-        for arr in buckets.values():
-            for rp, sz in arr:
-                sizes.add(sz)
-                s = str(rp)
-                if not (s.startswith("/usr/bin/") or s.startswith("/usr/sbin/")):
-                    all_usr = False
-        if all_usr and len(sizes) == 1:
-            continue
+def scan_dir_dtrust(root: Path, limit: int = 6000):
+    entries = []
+    files = dirs = ww = elf = 0
+    count = 0
+    for dirpath, dirnames, filenames in os.walk(root, followlinks=False):
+        for d in dirnames:
+            p = Path(dirpath) / d
+            try:
+                _ = p.stat()
+                dirs += 1
+            except Exception:
+                continue
+        for f in filenames:
+            if count >= limit:
+                break
+            p = Path(dirpath) / f
+            try:
+                st = p.stat()
+                mode_str, owner = file_mode_owner(p)
+                ww_bit = bool(stat.S_IMODE(st.st_mode) & 0o002)
+                if ww_bit: ww += 1
+                elf_bit = is_elf(p)
+                if elf_bit: elf += 1
+                files += 1
+                count += 1
+                entries.append({
+                    "path": str(p),
+                    "type": "file",
+                    "mode": mode_str,
+                    "owner": owner,
+                    "size": st.st_size,
+                    "elf": elf_bit,
+                    "w_world": ww_bit,
+                    "mtime_utc": datetime.fromtimestamp(st.st_mtime, tz=timezone.utc).replace(microsecond=0).isoformat(),
+                })
+            except Exception:
+                continue
+        if count >= limit:
+            break
+    return {
+        "entries": entries,
+        "stats": {"files": files, "dirs": dirs, "world_writable": ww, "elf_binaries": elf}
+    }
 
-        flat = []
-        for arr in buckets.values():
-            for rp, _ in arr:
-                flat.append(str(rp))
-        shadows[name] = sorted(set(flat))
-    return shadows
+def collect_manual_areas(root: Path):
+    out = {}
+    for p in (root / "usr" / "local", root / "opt"):
+        key = "/" + str(p.relative_to(root))
+        if p.exists() and p.is_dir():
+            out[key] = scan_dir_dtrust(p, limit=6000)
+        else:
+            out[key] = {"entries": [], "stats": {"files":0,"dirs":0,"world_writable":0,"elf_binaries":0}}
+    return out
 
 def collect_tier2(root: Path, overall_deadline: float):
-    now = datetime.now(timezone.utc).isoformat()
+    # Repos
     repos = gather_pkg_repos(root)
-    pacman_out = gather_pacman_repos(root)
-    repos.setdefault('apt', [])
-    repos.setdefault('yum_dnf', [])
-    repos['pacman'] = pacman_out
+    repos["pacman"] = gather_pacman_repos(root)  # keep your existing pacman routine
 
-    shadows = list_path_shadowing(root)
+    # Unsigned packages (safe no-op if module missing)
+    unsigned = collect_unsigned_packages(root)
 
-    manual_dirs = []
-    for p in [root / "usr" / "local", root / "opt"]:
-        if p.exists() and p.is_dir():
-            try:
-                entries = [str(x) for x in sorted(p.iterdir())[:200]]
-            except Exception:
-                entries = []
-            manual_dirs.append({"dir": str(p), "entries": entries})
+    # PATH shadowing (rich)
+    shadowing = list_path_shadowing(root)
+
+    # Manual areas (/usr/local, /opt)
+    manual = collect_manual_areas(root)
 
     return {
-        "schema_version": SCHEMA_VERSION,
-        "tier": 2,
-        "timestamp_utc": now,
-        "target_rootfs": str(root.resolve()),
         "repos": repos,
-        "path_shadowing": shadows,
-        "manual_areas": manual_dirs,
+        "unsigned_packages": unsigned,
+        "path_shadowing": shadowing,
+        "manual_areas": manual,
     }
 
 def run_tier(rootfs: str, tier: int, max_seconds: int = 15):
     root = Path(rootfs)
     deadline = time.time() + max_seconds
-    sysinfo = collect_system_info(rootfs)   # already returns {timestamp, system}
+    sysinfo = collect_system_info(rootfs)
 
-    # base envelope
     base = {
-        "schema": SCHEMA_VERSION,   # normalized
+        "schema": SCHEMA_VERSION,
         "tier": tier,
         "timestamp": sysinfo.get("timestamp"),
         "system": sysinfo.get("system", {}),
-        "target": str(root.resolve())
+        "target": str(root.resolve()),
     }
 
     if tier == 2:
         tier_data = collect_tier2(root, deadline)
     elif tier == 1:
+        # keep Tier-1 functional so --tier 1 doesn’t crash
         repos = gather_pkg_repos(root)
         repos["pacman"] = gather_pacman_repos(root)
-        tier_data = {
-            "repos": repos
-        }
+        tier_data = {"repos": repos}
     else:
-        raise SystemExit(f"Tiers >2 not implemented yet. Asked: {tier}")
+        raise SystemExit(f"Tiers > 2 not implemented yet. Asked: {tier}")
 
     base.update(tier_data)
     return base
