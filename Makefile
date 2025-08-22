@@ -59,3 +59,17 @@ render_pretty1:
 render_pretty2:
 	@mkdir -p build
 	python3 render_pretty.py --in build/tier2.json --out build/tier2_pretty.html --score build/tier2.score.json
+
+.PHONY: tier2 clean
+
+BUILD := build
+OUTDIR := reports/demo
+
+tier2:
+	@mkdir -p $(BUILD) $(OUTDIR)
+	python3 dtrust_cli.py --tier 2 --rootfs / --out $(BUILD)/tier2.json
+	python3 render_tier2_html.py $(BUILD)/tier2.json $(OUTDIR)/tier2_pretty.html
+	@echo "Wrote: $(OUTDIR)/tier2_pretty.html"
+
+clean:
+	@rm -rf $(BUILD) $(OUTDIR)
