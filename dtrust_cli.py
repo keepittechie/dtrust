@@ -19,7 +19,7 @@ def collect_system_info(rootfs="/"):
         distro = platform.system()
 
     kernel = platform.release()
-    ts = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    ts = datetime.now(timezone.utc).isoformat()
 
     return {
         "timestamp": ts,
