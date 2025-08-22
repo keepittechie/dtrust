@@ -2,7 +2,7 @@
 # render_tier2_html.py
 import json, html, sys
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 def esc(s): return html.escape(str(s if s is not None else ""))
 
@@ -115,7 +115,7 @@ def render_html(data):
         + section("Unsigned / Unverified Packages", render_unsigned(data))
         + section("PATH Shadowing", render_shadowing(data))
         + section("Manual Areas (/usr/local, /opt)", render_manual(data))
-        + f"<p style='margin-top:28px;color:#666;font-size:12px'>Generated {esc(datetime.utcnow().isoformat())}Z</p>"
+        + f"<p style='margin-top:28px;color:#666;font-size:12px'>Generated {esc(datetime.now(timezone.utc).isoformat())}</p>"
     )
     return head + body
 
