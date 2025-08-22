@@ -24,31 +24,75 @@ DistroTrust was built to provide that: a structured, reproducible scan of packag
 
 ## Quick Start
 
+
 ```bash
 # 1. Clone and enter the repo
 git clone https://github.com/keepittechie/dtrust.git
 cd dtrust
 
-# 2. Run a Tier-2 scan on your root filesystem
+# 2a. Run a Tier-1 scan on your root filesystem
+python3 dtrust_cli.py --tier 1 --rootfs / --out build/tier1.json
+
+# 2b. Or run a Tier-2 scan for deeper checks
 python3 dtrust_cli.py --tier 2 --rootfs / --out build/tier2.json
 
-# 3. Score + render the results
+# 3. Score + render the results (Tier-2 example)
 python3 score-dtrust-report.py build/tier2.json > build/tier2.score.json
 python3 render_pretty.py --in build/tier2.json --out build/tier2_pretty.html --score build/tier2.score.json
 
 # 4. Open the final report
 xdg-open build/tier2_pretty.html
-````
+```
 
 ---
 
 ## What it does
 
-* **Tier 1** – Collects base information such as distribution metadata.
-* **Tier 2** – Adds repository definitions (`apt`, `yum/dnf`, `pacman`), path shadowing (duplicate binaries across directories), and manual areas of interest (`/usr/local`, `/opt`).
-* Higher tiers (planned) will include even more checks.
+* **Tier 1** – Collects baseline trust signals:
+  * Distribution metadata (`/etc/os-release`, ID, version, ID_LIKE).
+  * Basic system info (timestamp, target rootfs, uname).
+  * Repository inventory (APT, YUM/DNF, Pacman) with raw listings.
+  * User accounts, cron jobs, SUID/SGID binaries, services, resource limits.
 
-The output can be scored for consistency and rendered into a clean HTML report for inspection.
+* **Tier 2** – Builds on Tier 1 with deeper checks:
+  * **Normalized repository configuration**:  
+    - APT (`sources.list`, `sources.list.d`)  
+    - YUM/DNF (`*.repo` files)  
+    - Pacman (`pacman.conf`)  
+    Each repo is parsed for `enabled`, `gpgcheck`, `baseurl/mirrorlist`, and associated GPG keys.
+  * **Unsigned / unverified packages**: flags packages missing signatures or failing signature validation.
+  * **PATH shadowing**: detects binaries in `/usr/local/bin` or other directories that override system binaries in `/usr/bin`, including SHA-256 hashes of each file.
+  * **Manual areas of interest**: scans `/usr/local` and `/opt` for potentially unsafe files. Reports:  
+    - File counts, directory counts, ELF binaries.  
+    - World-writable files.  
+    - Metadata for the first ~100 entries (mode, owner, size, mtime, ELF flag, etc.).
+
+* **Higher tiers (planned)** – Will expand into runtime/process auditing, kernel modules, network listeners, telemetry detection, and forensic integrity checks.
+
+The output is JSON by design — machine-readable for automation, but also scorable and renderable into polished HTML for human inspection.
+
+---
+
+## Feature Matrix
+
+| Capability                              | Tier 1 (Baseline) | Tier 2 (Deeper) | Planned (Higher Tiers) |
+|-----------------------------------------|:-----------------:|:---------------:|:----------------------:|
+| Distro metadata (`/etc/os-release`)     |         ✓         |        ✓        |           ✓            |
+| System envelope (timestamp, target)     |         ✓         |        ✓        |           ✓            |
+| Repo inventory (APT/YUM/DNF/Pacman)*    |         ✓         |        ✓        |           ✓            |
+| **Normalized repo config** (enabled, gpgcheck, baseurl/mirrorlist, keys) |         –         |        ✓        |           ✓            |
+| **Unsigned / unverified packages**      |         –         |        ✓        |           ✓            |
+| **PATH shadowing** (first-hit vs shadowed, SHA-256) | – | ✓ | ✓ |
+| **Manual areas** `/usr/local`, `/opt` (stats + entries w/ mode, owner, ELF, ww, mtime) | – | ✓ | ✓ |
+| Users / cron / SUID-SGID / services / limits |         ✓         |        ✓        |           ✓            |
+| Scoring (JSON)                          |         ✓         |        ✓        |           ✓            |
+| Pretty HTML rendering                   |         ✓         |        ✓        |           ✓            |
+| Runtime/process auditing                |         –         |        –        |           ✓            |
+| Kernel modules / drivers integrity      |         –         |        –        |           ✓            |
+| Network listeners & telemetry checks    |         –         |        –        |           ✓            |
+| Forensic integrity / deep file checks   |         –         |        –        |           ✓            |
+
+\* Tier-1 includes a **raw** repo inventory; Tier-2 adds a **normalized** schema with `enabled`, `gpgcheck`, `baseurl/mirrorlist`, and GPG key paths.
 
 ---
 
@@ -64,6 +108,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+
 ---
 
 ## Usage
@@ -71,24 +116,33 @@ pip install -r requirements.txt
 Run directly with Python:
 
 ```bash
-# Tier 1
-python3 dtrust_cli.py --tier 1 --rootfs / --out build/report.json
+# Tier 1 (basic distro metadata and repo inventory)
+python3 dtrust_cli.py --tier 1 --rootfs / --out build/tier1.json
 
-# Tier 2
+# Tier 2 (adds repo configs, path shadowing, manual areas, unsigned packages)
 python3 dtrust_cli.py --tier 2 --rootfs / --out build/tier2.json
-```
 
 Score and render the reports:
 
-```bash
+# Score Tier-2 results
 python3 score-dtrust-report.py build/tier2.json > build/tier2.score.json
+
+# Render Tier-2 results into HTML
 python3 render_pretty.py --in build/tier2.json --out build/tier2_pretty.html --score build/tier2.score.json
 ```
 
-Open `build/tier2_pretty.html` in your browser to view the results.
+Then open the HTML report in your browser:
+
+```bash
+xdg-open build/tier2_pretty.html
+```
+
 
 ---
 
+### Using `make`
+
+```markdown
 ## Using `make`
 
 This project ships with a **Makefile** so you don’t need to type long commands manually.
@@ -96,7 +150,7 @@ This project ships with a **Makefile** so you don’t need to type long commands
 
 Common targets:
 
-* `make tier1` – Collect Tier-1 signals → `build/report.json`
+* `make tier1` – Collect Tier-1 signals → `build/tier1.json`
 * `make tier2` – Collect Tier-2 signals → `build/tier2.json`
 * `make score-json1` / `make score-json2` – Score the Tier-1 or Tier-2 reports
 * `make render_pretty1` / `make render_pretty2` – Render polished HTML reports
