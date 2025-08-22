@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import sys, os, json, time, glob, platform, datetime
+import sys, os, json, time, glob, platform
 from datetime import datetime, timezone
 from pathlib import Path
 
