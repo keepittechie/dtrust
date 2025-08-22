@@ -6,7 +6,6 @@ __pycache__/
 # Backups & patches
 *.bak
 *.patch
-*.sh
 
 # Local profiles/reports
 dtrust/profiles/*.json
