@@ -1,9 +1,33 @@
 #!/usr/bin/env python3
-import sys, os, json, time, glob
+import sys, os, json, time, glob, platform, datetime
 from datetime import datetime, timezone
 from pathlib import Path
 
 SCHEMA_VERSION = "1.0.0"
+
+def collect_system_info(rootfs="/"):
+    """Collect distro, kernel, timestamp for metadata envelope."""
+    distro = None
+    osrel = os.path.join(rootfs, "etc/os-release")
+    if os.path.exists(osrel):
+        with open(osrel) as f:
+            for line in f:
+                if line.startswith("PRETTY_NAME="):
+                    distro = line.split("=", 1)[1].strip().strip('"')
+                    break
+    if not distro:
+        distro = platform.system()
+
+    kernel = platform.release()
+    ts = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    return {
+        "timestamp": ts,
+        "system": {
+            "distro": distro,
+            "kernel": kernel
+        }
+    }
 
 def read_text(p: Path) -> str:
     try:
@@ -188,22 +212,30 @@ def collect_tier2(root: Path, overall_deadline: float):
 def run_tier(rootfs: str, tier: int, max_seconds: int = 15):
     root = Path(rootfs)
     deadline = time.time() + max_seconds
+    sysinfo = collect_system_info(rootfs)   # already returns {timestamp, system}
+
+    # base envelope
+    base = {
+        "schema": SCHEMA_VERSION,   # normalized
+        "tier": tier,
+        "timestamp": sysinfo.get("timestamp"),
+        "system": sysinfo.get("system", {}),
+        "target": str(root.resolve())
+    }
+
     if tier == 2:
-        return collect_tier2(root, deadline)
+        tier_data = collect_tier2(root, deadline)
     elif tier == 1:
-        # Minimal Tier-1: just repos
-        now = datetime.now(timezone.utc).isoformat()
         repos = gather_pkg_repos(root)
-        repos['pacman'] = gather_pacman_repos(root)
-        return {
-            "schema_version": SCHEMA_VERSION,
-            "tier": 1,
-            "timestamp_utc": now,
-            "target_rootfs": str(root.resolve()),
-            "repos": repos,
+        repos["pacman"] = gather_pacman_repos(root)
+        tier_data = {
+            "repos": repos
         }
     else:
         raise SystemExit(f"Tiers >2 not implemented yet. Asked: {tier}")
+
+    base.update(tier_data)
+    return base
 
 def _main_with_argparse():
     import argparse
