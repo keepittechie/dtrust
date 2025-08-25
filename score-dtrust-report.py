@@ -40,39 +40,99 @@ def load_weights():
 def score_tier1(report, weights):
     penalties = []
     signals = {}
-    suids = report.get("suid_sgid", [])
+
+    suids = report.get("suid_sgid", []) or []
     count = len(suids)
     signals["suid_count"] = count
-    w = (weights.get("weights", {}) or {}).get("tier2", {}) or {}
+
+    # FIX: use tier1 weights (was mistakenly looking up "tier2")
+    w = (weights.get("weights", {}) or {}).get("tier1", {}) or {}
     per = float(w.get("suid_per_file_penalty", 0.2))
     cap = int(w.get("suid_cap", 15))
+
     applied = min(count, cap)
     if applied > 0:
         penalties.append({"reason": f"{applied} suid/sgid binaries", "value": -per * applied})
+
     score = 100.0 + sum(p["value"] for p in penalties)
-    if score < 0: score = 0.0
+    if score < 0:
+        score = 0.0
     return round(score, 1), penalties, signals
+
+
+def _count_shadow_bins(shadows):
+    """Robustly count shadowed binaries across multiple possible shapes."""
+    if isinstance(shadows, dict):
+        # expected original shape: {"/usr/bin": ["foo","bar"], ...}
+        total = 0
+        for v in shadows.values():
+            if isinstance(v, list):
+                total += len(v)
+            elif isinstance(v, (int, float)):
+                total += int(v)
+            elif v is None:
+                continue
+            else:
+                # fallback: count as 1 if it’s some other type
+                total += 1
+        return total
+
+    if isinstance(shadows, list):
+        # Anduin shape: list of strings or objects
+        total = 0
+        for item in shadows:
+            if isinstance(item, str):
+                total += 1
+            elif isinstance(item, dict):
+                # Try common keys that might contain the actual list
+                for k in ("bins", "binaries", "paths", "files"):
+                    v = item.get(k)
+                    if isinstance(v, list):
+                        total += len(v)
+                        break
+                else:
+                    # No recognizable list field -> count the item itself
+                    total += 1
+            elif isinstance(item, (int, float)):
+                total += int(item)
+            else:
+                total += 1
+        return total
+
+    # anything else
+    return 0
+
 
 def score_tier2(report, weights):
     penalties = []
     signals = {}
-    shadows = report.get("path_shadowing", {})
-    shadow_bins = sum(len(v) for v in shadows.values())
+
+    shadows = report.get("path_shadowing", {})  # may be dict OR list
+    shadow_bins = _count_shadow_bins(shadows)
     signals["shadow_bin_paths"] = shadow_bins
+
     w = (weights.get("weights", {}) or {}).get("tier2", {}) or {}
     per = float(w.get("shadowing_per_bin_penalty", 0.1))
     cap = w.get("shadowing_cap")
+
     total_pen = per * shadow_bins
     if cap is not None:
         try:
             total_pen = min(total_pen, float(cap))
         except Exception:
             pass
+
     if shadow_bins:
-        penalties.append({"reason": f"{shadow_bins} PATH shadowed binaries", "value": -float(total_pen)})
+        penalties.append({
+            "reason": f"{shadow_bins} PATH shadowed binaries",
+            "value": -float(total_pen)
+        })
+
     score = 100.0 + sum(p["value"] for p in penalties)
-    if score < 0: score = 0.0
+    if score < 0:
+        score = 0.0
     return round(score, 1), penalties, signals
+
 
 def main():
     if len(sys.argv) != 2:
