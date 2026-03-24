@@ -3,10 +3,89 @@
   "tier": 2,
   "timestamp_utc": "1970-01-01T00:00:00Z",
   "target_rootfs": "/",
-  "repos": {
-    "apt": [],
-    "yum_dnf": []
+  "kernel": "6.0.0-test",
+  "distro": {
+    "id": "example",
+    "name": "Example Linux",
+    "version_id": "1",
+    "pretty_name": "Example Linux 1"
   },
-  "path_shadowing": {},
-  "manual_areas": []
+  "users": [],
+  "groups": [],
+  "cron": {
+    "system_crontab": null,
+    "cron_d_files": [],
+    "cron_dirs": {}
+  },
+  "suid_sgid": [],
+  "services": [],
+  "limits": {
+    "max_seconds": 15,
+    "manual_area_entry_limit": 6000,
+    "suid_scan_roots": []
+  },
+  "repos": {
+    "apt": [
+      {
+        "file": "/etc/apt/sources.list",
+        "name": "stable",
+        "enabled": true,
+        "baseurl": "https://mirror.example.org/debian",
+        "mirrorlist": null,
+        "gpgcheck": true,
+        "gpgkey_files": [],
+        "components": [
+          "main"
+        ],
+        "options": ""
+      }
+    ],
+    "yum_dnf": [],
+    "pacman": []
+  },
+  "unsigned_packages": [],
+  "path_shadowing": [
+    {
+      "basename": "python3",
+      "first_hit": "/usr/local/bin/python3",
+      "shadowed": [
+        "/usr/bin/python3"
+      ],
+      "first_hit_sha256": "abc",
+      "shadowed_sha256": [
+        "def"
+      ]
+    }
+  ],
+  "manual_areas": {
+    "/usr/local": {
+      "entries": [
+        {
+          "path": "/usr/local/bin/python3",
+          "type": "file",
+          "mode": "0755",
+          "owner": "root:root",
+          "size": 12345,
+          "elf": true,
+          "w_world": false,
+          "mtime_utc": "1970-01-01T00:00:00+00:00"
+        }
+      ],
+      "stats": {
+        "files": 1,
+        "dirs": 1,
+        "world_writable": 0,
+        "elf_binaries": 1
+      }
+    },
+    "/opt": {
+      "entries": [],
+      "stats": {
+        "files": 0,
+        "dirs": 0,
+        "world_writable": 0,
+        "elf_binaries": 0
+      }
+    }
+  }
 }

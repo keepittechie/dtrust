@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "dtrust Tier-3 Report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "tier",
+    "timestamp_utc",
+    "target_rootfs",
+    "kernel",
+    "distro",
+    "users",
+    "groups",
+    "cron",
+    "suid_sgid",
+    "services",
+    "limits",
+    "repos",
+    "unsigned_packages",
+    "path_shadowing",
+    "manual_areas",
+    "advanced_checks"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "tier": {
+      "type": "integer",
+      "const": 3
+    },
+    "timestamp_utc": {
+      "type": "string"
+    },
+    "target_rootfs": {
+      "type": "string"
+    },
+    "kernel": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "distro": {
+      "type": "object"
+    },
+    "users": {
+      "type": "array"
+    },
+    "groups": {
+      "type": "array"
+    },
+    "cron": {
+      "type": "object"
+    },
+    "suid_sgid": {
+      "type": "array"
+    },
+    "services": {
+      "type": "array"
+    },
+    "limits": {
+      "type": "object"
+    },
+    "repos": {
+      "type": "object"
+    },
+    "unsigned_packages": {
+      "type": "array"
+    },
+    "path_shadowing": {
+      "type": "array"
+    },
+    "manual_areas": {
+      "type": "object"
+    },
+    "advanced_checks": {
+      "type": "object",
+      "required": [
+        "status",
+        "process_audit",
+        "network_listeners",
+        "kernel_integrity"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "process_audit": {
+          "type": "object"
+        },
+        "network_listeners": {
+          "type": "object"
+        },
+        "kernel_integrity": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

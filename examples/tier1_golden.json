@@ -833,5 +833,10 @@
   ],
   "limits": {
     "time_remaining_seconds": 9.67
+  },
+  "repos": {
+    "apt": [],
+    "yum_dnf": [],
+    "pacman": []
   }
 }

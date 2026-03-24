@@ -7,10 +7,15 @@
     "tier",
     "timestamp_utc",
     "target_rootfs",
+    "kernel",
     "distro",
     "users",
+    "groups",
     "cron",
-    "suid_sgid"
+    "suid_sgid",
+    "services",
+    "limits",
+    "repos"
   ],
   "properties": {
     "schema_version": {
@@ -191,6 +196,20 @@
     },
     "limits": {
       "type": "object"
+    },
+    "repos": {
+      "type": "object",
+      "properties": {
+        "apt": {
+          "type": "array"
+        },
+        "yum_dnf": {
+          "type": "array"
+        },
+        "pacman": {
+          "type": "array"
+        }
+      }
     }
   }
 }

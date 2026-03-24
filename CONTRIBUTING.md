@@ -42,9 +42,6 @@ cd dtrust
 python3 -m venv .venv
 source .venv/bin/activate   # On Linux/Mac
 .venv\Scripts\activate      # On Windows
-
-# 3. Install dependencies (if any are added later)
-pip install -r requirements.txt
 ````
 
 ---
@@ -68,10 +65,10 @@ python3 render_pretty.py --in build/tier2.json --out build/tier2_pretty.html --s
 Or use:
 
 ```bash
-make
+make regression
 ```
 
-to build reports using the default Makefile targets.
+to validate, score, and render the golden example reports.
 
 ---
 
@@ -81,6 +78,7 @@ to build reports using the default Makefile targets.
 * Use clear, descriptive commit messages.
 * Write docstrings for new functions.
 * Keep changes small and focused.
+* Run `make regression` before sending a PR.
 
 ---
 

@@ -1,185 +1,132 @@
 #!/usr/bin/env python3
-"""
-render_report.py
-Convert a dtrust JSON report into Markdown and HTML (no external deps).
-
-Usage:
-  python3 render_report.py --in report.json --out report.md
-  python3 render_report.py --in report.json --out report.html
-"""
-import json, argparse, html, sys
+import argparse
+import html
+import json
+import sys
 from pathlib import Path
-from datetime import datetime
 
 CSS = """\
-body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Helvetica Neue',Arial,sans-serif;line-height:1.5;margin:2rem;max-width:980px}
-h1,h2,h3{line-height:1.2}
-code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,'Liberation Mono','Courier New',monospace}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial,sans-serif;line-height:1.5;margin:2rem;max-width:1000px}
+code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
 pre{background:#f6f8fa;padding:1rem;overflow:auto;border-radius:8px}
-table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:.5rem}th{background:#fafafa;text-align:left}
-.badge{display:inline-block;padding:.25rem .6rem;border-radius:999px;background:#eee;border:1px solid #ddd;font-weight:600;font-size:.85rem}
-.small{color:#555}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #ddd;padding:.5rem;text-align:left;vertical-align:top}
+th{background:#fafafa}
 """
 
-def md_escape(s: str) -> str:
-    return s.replace("|", r"\|")
 
-def render_markdown(report: dict) -> str:
+def render_markdown(report):
     distro = report.get("distro", {}) or {}
-    title = f"dtrust Report — Tier {report.get('tier')}"
-    lines = [f"# {title}", ""]
-    lines.append(f"- **Schema**: `{report.get('schema_version')}`")
-    lines.append(f"- **Timestamp (UTC)**: `{report.get('timestamp_utc')}`")
-    lines.append(f"- **Target rootfs**: `{report.get('target_rootfs')}`")
-    if report.get("kernel"):
-        lines.append(f"- **Kernel**: `{md_escape(report['kernel'])}`")
-    lines.append(f"- **Distro**: `{md_escape(str(distro.get('pretty_name') or distro.get('name') or 'unknown'))}`")
-    lines.append("")
+    lines = [
+        f"# dtrust Report - Tier {report.get('tier')}",
+        "",
+        f"- **Schema**: `{report.get('schema_version')}`",
+        f"- **Timestamp (UTC)**: `{report.get('timestamp_utc')}`",
+        f"- **Target rootfs**: `{report.get('target_rootfs')}`",
+        f"- **Kernel**: `{report.get('kernel')}`",
+        f"- **Distro**: `{distro.get('pretty_name') or distro.get('name')}`",
+        "",
+        "## Summary",
+        "",
+        f"- **Users**: `{len(report.get('users', []) or [])}`",
+        f"- **Groups**: `{len(report.get('groups', []) or [])}`",
+        f"- **SUID/SGID entries**: `{len(report.get('suid_sgid', []) or [])}`",
+        f"- **Services**: `{len(report.get('services', []) or [])}`",
+    ]
 
-    # Users
-    users = report.get("users", [])
-    if users:
-        lines += ["## Users", "", "| name | uid | gid | home | shell |", "|---|---:|---:|---|---|"]
-        for u in users[:200]:
-            lines.append(f"| {md_escape(u.get('name',''))} | {u.get('uid','')} | {u.get('gid','')} | {md_escape(u.get('home',''))} | {md_escape(u.get('shell',''))} |")
-        if len(users) > 200:
-            lines.append(f"\n> _and {len(users)-200} more…_")
-        lines.append("")
+    if report.get("tier") in (2, 3):
+        lines.extend(
+            [
+                f"- **Unsigned packages**: `{len(report.get('unsigned_packages', []) or [])}`",
+                f"- **PATH shadowing entries**: `{len(report.get('path_shadowing', []) or [])}`",
+                f"- **Manual areas**: `{len((report.get('manual_areas') or {}).keys())}`",
+            ]
+        )
+    if report.get("tier") == 3:
+        advanced = report.get("advanced_checks", {}) or {}
+        process_summary = ((advanced.get("process_audit") or {}).get("summary") or {})
+        network_summary = ((advanced.get("network_listeners") or {}).get("summary") or {})
+        kernel_summary = ((advanced.get("kernel_integrity") or {}).get("summary") or {})
+        lines.extend(
+            [
+                f"- **Runtime processes**: `{process_summary.get('total_processes', 0)}`",
+                f"- **Deleted executable processes**: `{process_summary.get('deleted_executable_processes', 0)}`",
+                f"- **Suspicious executable processes**: `{process_summary.get('suspicious_executable_processes', 0)}`",
+                f"- **Orphan-like processes**: `{process_summary.get('orphan_like_processes', 0)}`",
+                f"- **Network listeners**: `{network_summary.get('total_listeners', 0)}`",
+                f"- **Wildcard binds**: `{network_summary.get('wildcard_bind_count', 0)}`",
+                f"- **Loaded kernel modules**: `{kernel_summary.get('loaded_modules', 0)}`",
+                f"- **Suspicious kernel modules**: `{kernel_summary.get('suspicious_modules', 0)}`",
+            ]
+        )
 
-    # Groups
-    groups = report.get("groups", [])
-    if groups:
-        lines += ["## Groups", "", "| name | gid | members |", "|---|---:|---|"]
-        for g in groups[:200]:
-            members = ", ".join(g.get("members", []))
-            lines.append(f"| {md_escape(g.get('name',''))} | {g.get('gid','')} | {md_escape(members)} |")
-        if len(groups) > 200:
-            lines.append(f"\n> _and {len(groups)-200} more…_")
-        lines.append("")
-
-    # Cron
-    cron = report.get("cron", {})
-    lines += ["## Cron", ""]
-    sys_cron = cron.get("system_crontab")
-    lines.append("**/etc/crontab**:")
-    lines.append("")
-    lines.append("```")
-    lines.append((sys_cron or "").strip())
-    lines.append("```")
-    lines.append("")
-    lines.append("**/etc/cron.d files**: " + ", ".join(cron.get("cron_d_files", [])[:100]))
-    lines.append("")
-    if "cron_dirs" in cron:
-        for dname, entries in cron["cron_dirs"].items():
-            lines.append(f"**/etc/{dname}**: " + ", ".join(entries[:100]))
-    lines.append("")
-
-    # SUID/SGID
-    suids = report.get("suid_sgid", [])
-    lines += ["## SUID/SGID Binaries (sample)", "", "| path | mode | suid | sgid |", "|---|---|:--:|:--:|"]
-    for s in suids[:200]:
-        lines.append(f"| {md_escape(s.get('path',''))} | {md_escape(s.get('mode_octal',''))} | {str(s.get('suid'))} | {str(s.get('sgid'))} |")
-    if len(suids) > 200:
-        lines.append(f"\n> _and {len(suids)-200} more…_")
-    lines.append("")
-
-    # Services
-    services = report.get("services", [])
-    if services:
-        lines += ["## Systemd Services (filenames)", ""]
-        for svc in services[:400]:
-            lines.append(f"- `{md_escape(svc)}`")
-        if len(services) > 400:
-            lines.append(f"\n> _and {len(services)-400} more…_")
-        lines.append("")
-
-    # Limits
-    limits = report.get("limits", {})
-    if limits:
-        lines += ["## Scan Limits", ""]
-        for k, v in limits.items():
-            lines.append(f"- **{k}**: `{v}`")
-        lines.append("")
-
+    lines.extend(
+        [
+            "",
+            "## Report JSON",
+            "```json",
+            json.dumps(report, indent=2),
+            "```",
+        ]
+    )
     return "\n".join(lines)
 
-def render_html(markdown_text: str, title: str = "dtrust Report"):
-    # Extremely simple Markdown to HTML (subset) without external libs.
-    # We rely on the fact that our generator is predictable.
-    # For production, switch to a proper Markdown lib; this is fine for a preview.
-    import re
-    html_lines = []
+
+def render_html(markdown_text, title):
+    body = ""
+    in_code = False
     for line in markdown_text.splitlines():
         if line.startswith("# "):
-            html_lines.append(f"<h1>{html.escape(line[2:].strip())}</h1>"); continue
-        if line.startswith("## "):
-            html_lines.append(f"<h2>{html.escape(line[3:].strip())}</h2>"); continue
-        if line.startswith("- "):
-            # simple list
-            if not html_lines or not html_lines[-1].startswith("<ul"):
-                html_lines.append("<ul>")
-            html_lines.append(f"<li>{html.escape(line[2:].strip())}</li>")
-            # we'll close ul after block ends
-            continue
-        if line.startswith("|") and line.endswith("|"):
-            # crude table accumulator
-            cells = [c.strip() for c in line.strip("|").split("|")]
-            if not html_lines or not html_lines[-1].startswith("<table"):
-                html_lines.append("<table>")
-            row = "".join(f"<td>{html.escape(c)}</td>" for c in cells)
-            html_lines.append(f"<tr>{row}</tr>")
-            continue
-        if line.startswith("```"):
-            if not html_lines or not html_lines[-1].startswith("<pre"):
-                html_lines.append("<pre><code>")
+            body += f"<h1>{html.escape(line[2:])}</h1>\n"
+        elif line.startswith("## "):
+            body += f"<h2>{html.escape(line[3:])}</h2>\n"
+        elif line.startswith("- "):
+            if not body.endswith("</ul>\n"):
+                body += "<ul>\n"
+            body += f"<li>{html.escape(line[2:])}</li>\n"
+        elif line.startswith("```"):
+            if in_code:
+                body += "</code></pre>\n"
             else:
-                html_lines.append("</code></pre>")
-            continue
-        if line.strip().startswith("> _and "):
-            html_lines.append(f"<p class='small'>{html.escape(line.strip()[2:].strip())}</p>")
-            continue
-        if line.strip() == "":
-            # close lists/tables if previous lines opened them
-            if html_lines and html_lines[-1].startswith("<ul"):
-                html_lines.append("</ul>")
-            if html_lines and html_lines[-1].startswith("<table"):
-                html_lines.append("</table>")
-            html_lines.append("<p></p>")
-            continue
-        # default paragraph or code content inside <pre><code>
-        if html_lines and html_lines[-1].endswith("<code>"):
-            html_lines.append(html.escape(line))
+                body += "<pre><code>"
+            in_code = not in_code
+        elif line.strip() == "":
+            if body.endswith("</li>\n"):
+                body += "</ul>\n"
+            body += "\n"
         else:
-            html_lines.append(f"<p>{html.escape(line)}</p>")
+            if in_code:
+                body += html.escape(line) + "\n"
+            else:
+                body += f"<p>{html.escape(line)}</p>\n"
+    if in_code:
+        body += "</code></pre>\n"
+    if body.endswith("</li>\n"):
+        body += "</ul>\n"
+    return f"<!doctype html><html><head><meta charset='utf-8'><title>{html.escape(title)}</title><style>{CSS}</style></head><body>{body}</body></html>"
 
-    # Close any open tags
-    if html_lines and html_lines[-1].startswith("<ul"):
-        html_lines.append("</ul>")
-    if html_lines and html_lines[-1].startswith("<table"):
-        html_lines.append("</table>")
-
-    return f"<!doctype html><html><head><meta charset='utf-8'><title>{html.escape(title)}</title><style>{CSS}</style></head><body>\n" + "\n".join(html_lines) + "\n</body></html>"
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--in", dest="inp", required=True, help="Input dtrust JSON report")
-    ap.add_argument("--out", dest="out", required=True, help="Output file (.md or .html)")
-    args = ap.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--in", dest="inp", required=True)
+    parser.add_argument("--out", dest="out", required=True)
+    args = parser.parse_args()
 
-    data = json.loads(Path(args.inp).read_text(encoding="utf-8"))
-    md = render_markdown(data)
+    report = json.loads(Path(args.inp).read_text(encoding="utf-8"))
+    markdown = render_markdown(report)
+    out_path = Path(args.out)
 
-    outp = Path(args.out)
-    if outp.suffix.lower() == ".md":
-        outp.write_text(md, encoding="utf-8")
-        print(f"Wrote Markdown: {outp}")
-    elif outp.suffix.lower() == ".html":
-        html_doc = render_html(md, title=f"dtrust Report — Tier {data.get('tier')}")
-        outp.write_text(html_doc, encoding="utf-8")
-        print(f"Wrote HTML: {outp}")
+    if out_path.suffix.lower() == ".md":
+        out_path.write_text(markdown, encoding="utf-8")
+        print(f"Wrote Markdown: {out_path}")
+    elif out_path.suffix.lower() == ".html":
+        html_doc = render_html(markdown, f"dtrust Report - Tier {report.get('tier')}")
+        out_path.write_text(html_doc, encoding="utf-8")
+        print(f"Wrote HTML: {out_path}")
     else:
         print("Output extension must be .md or .html", file=sys.stderr)
         sys.exit(2)
+
 
 if __name__ == "__main__":
     main()

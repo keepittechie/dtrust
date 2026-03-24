@@ -1,0 +1,76 @@
+version: 1
+findings:
+  tier1.suid_sgid:
+    severity: medium
+    category: privilege
+    title: SUID/SGID binaries detected
+
+  tier2.path_shadowing:
+    severity: medium
+    category: execution_path
+    title: PATH shadowing detected
+  tier2.repo_security:
+    severity: high
+    category: supply_chain
+    title: Insecure repository settings detected
+  tier2.unsigned_packages:
+    severity: high
+    category: package_integrity
+    title: Unsigned packages detected
+  tier2.manual_area_world_writable:
+    severity: medium
+    category: filesystem
+    title: World-writable files in manual areas
+
+  tier3.path_shadowing:
+    severity: medium
+    category: execution_path
+    title: PATH shadowing detected
+  tier3.repo_security:
+    severity: high
+    category: supply_chain
+    title: Insecure repository settings detected
+  tier3.unsigned_packages:
+    severity: high
+    category: package_integrity
+    title: Unsigned packages detected
+  tier3.manual_area_world_writable:
+    severity: medium
+    category: filesystem
+    title: World-writable files in manual areas
+  tier3.deleted_exec_processes:
+    severity: high
+    category: runtime_process
+    title: Processes running deleted executables
+  tier3.suspicious_exec_processes:
+    severity: medium
+    category: runtime_process
+    title: Processes with suspicious executable paths
+  tier3.orphan_like_processes:
+    severity: low
+    category: runtime_process
+    title: Orphan-like processes detected
+  tier3.wildcard_listeners:
+    severity: medium
+    category: network
+    title: Wildcard network listeners detected
+  tier3.unattributed_listeners:
+    severity: medium
+    category: network
+    title: Listeners without process attribution
+  tier3.kernel_path_anomalies:
+    severity: medium
+    category: kernel_module
+    title: Kernel modules with suspicious path classifications
+  tier3.kernel_missing_module_files:
+    severity: high
+    category: kernel_module
+    title: Loaded kernel modules missing on-disk files
+  tier3.kernel_tainted_modules:
+    severity: medium
+    category: kernel_module
+    title: Tainted kernel modules detected
+  tier3.kernel_known_third_party_layouts:
+    severity: info
+    category: kernel_module
+    title: Kernel modules categorized as known third-party layouts

@@ -1,0 +1,152 @@
+{
+  "schema_version": "1.0.0",
+  "tier": 3,
+  "timestamp_utc": "1970-01-01T00:00:00Z",
+  "target_rootfs": "/",
+  "kernel": "6.0.0-test",
+  "distro": {
+    "id": "example",
+    "name": "Example Linux",
+    "version_id": "1",
+    "pretty_name": "Example Linux 1"
+  },
+  "users": [],
+  "groups": [],
+  "cron": {
+    "system_crontab": null,
+    "cron_d_files": [],
+    "cron_dirs": {}
+  },
+  "suid_sgid": [],
+  "services": [],
+  "limits": {
+    "max_seconds": 15,
+    "manual_area_entry_limit": 6000,
+    "suid_scan_roots": []
+  },
+  "repos": {
+    "apt": [],
+    "yum_dnf": [],
+    "pacman": []
+  },
+  "unsigned_packages": [],
+  "path_shadowing": [],
+  "manual_areas": {},
+  "advanced_checks": {
+    "status": "ok",
+    "process_audit": {
+      "summary": {
+        "total_processes": 2,
+        "total_threads": 3,
+        "root_owned_processes": 1,
+        "deleted_executable_processes": 0,
+        "orphan_like_processes": 1,
+        "suspicious_executable_processes": 1
+      },
+      "processes": [
+        {
+          "pid": 1,
+          "ppid": 0,
+          "name": "init",
+          "uid": 0,
+          "threads": 1,
+          "exe": "/sbin/init",
+          "cmdline": "/sbin/init"
+        },
+        {
+          "pid": 42,
+          "ppid": 1,
+          "name": "weird-agent",
+          "uid": 1000,
+          "threads": 2,
+          "exe": "/tmp/weird-agent",
+          "cmdline": "/tmp/weird-agent --serve"
+        }
+      ],
+      "suspicious_processes": [
+        {
+          "pid": 42,
+          "name": "weird-agent",
+          "uid": 1000,
+          "exe": "/tmp/weird-agent",
+          "cmdline": "/tmp/weird-agent --serve",
+          "reason": "ephemeral_executable_path",
+          "ancestry": [
+            {
+              "pid": 42,
+              "name": "weird-agent",
+              "exe": "/tmp/weird-agent"
+            },
+            {
+              "pid": 1,
+              "name": "init",
+              "exe": "/sbin/init"
+            }
+          ]
+        }
+      ]
+    },
+    "network_listeners": {
+      "summary": {
+        "total_listeners": 1,
+        "wildcard_bind_count": 1,
+        "unattributed_listener_count": 0
+      },
+      "listeners": [
+        {
+          "proto": "tcp",
+          "family": "ipv4",
+          "kind": "stream",
+          "local_address": "0.0.0.0",
+          "local_port": 8080,
+          "path": null,
+          "state": "0A",
+          "inode": "12345",
+          "pids": [
+            42
+          ],
+          "process_names": [
+            "weird-agent"
+          ]
+        }
+      ]
+    },
+    "kernel_integrity": {
+      "status": "ok",
+      "summary": {
+        "loaded_modules": 2,
+        "suspicious_modules": 1,
+        "missing_module_files": 0,
+        "tainted_modules": 0
+      },
+      "modules": [
+        {
+          "name": "e1000e",
+          "size": 123456,
+          "use_count": 0,
+          "dependencies": [],
+          "state": "Live",
+          "address": "0xffffffffc0000000",
+          "module_path": "/lib/modules/6.0.0-test/kernel/drivers/net/ethernet/intel/e1000e/e1000e.ko",
+          "module_path_category": "in_tree",
+          "path_risk_reason": null,
+          "risk_reason": null
+        },
+        {
+          "name": "weirdhook",
+          "size": 9999,
+          "use_count": 1,
+          "dependencies": [
+            "e1000e"
+          ],
+          "state": "Live",
+          "address": "0xffffffffc0010000",
+          "module_path": "/lib/modules/6.0.0-test/updates/weirdhook.ko",
+          "module_path_category": "updates",
+          "path_risk_reason": "out_of_tree_module_path",
+          "risk_reason": "out_of_tree_module_path"
+        }
+      ]
+    }
+  }
+}

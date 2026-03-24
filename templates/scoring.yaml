@@ -3,13 +3,23 @@ weights:
   tier1:
     suid_per_file_penalty: 0.2
     suid_cap: 15
-    shadowing_per_bin_penalty: 1.0
-    cron_world_writable_penalty: 5
   tier2:
     repo_custom_source_penalty: 2
     manual_area_entry_penalty: 0.1
-
-weights:
-  tier2:
     shadowing_per_bin_penalty: 0.1
     shadowing_cap: 50
+    unsigned_package_penalty: 3
+  tier3:
+    repo_custom_source_penalty: 2
+    manual_area_entry_penalty: 0.1
+    shadowing_per_bin_penalty: 0.1
+    shadowing_cap: 50
+    unsigned_package_penalty: 3
+    deleted_exec_penalty: 4
+    suspicious_exec_penalty: 1.5
+    orphan_like_penalty: 0.5
+    wildcard_listener_penalty: 1.5
+    unattributed_listener_penalty: 2
+    suspicious_module_penalty: 2
+    missing_module_file_penalty: 3
+    tainted_module_penalty: 2

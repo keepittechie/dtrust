@@ -7,7 +7,16 @@
     "tier",
     "timestamp_utc",
     "target_rootfs",
+    "kernel",
+    "distro",
+    "users",
+    "groups",
+    "cron",
+    "suid_sgid",
+    "services",
+    "limits",
     "repos",
+    "unsigned_packages",
     "path_shadowing",
     "manual_areas"
   ],
@@ -26,84 +35,76 @@
     "target_rootfs": {
       "type": "string"
     },
+    "kernel": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "distro": {
+      "type": "object"
+    },
+    "users": {
+      "type": "array"
+    },
+    "groups": {
+      "type": "array"
+    },
+    "cron": {
+      "type": "object"
+    },
+    "suid_sgid": {
+      "type": "array"
+    },
+    "services": {
+      "type": "array"
+    },
+    "limits": {
+      "type": "object"
+    },
     "repos": {
       "type": "object",
       "properties": {
         "apt": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "file": {
-                "type": "string"
-              },
-              "lines": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
+            "type": "object"
           }
         },
         "yum_dnf": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "file": {
-                "type": "string"
-              },
-              "content": {
-                "type": "string"
-              }
-            }
+            "type": "object"
           }
         },
         "pacman": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "file": {
-                "type": "string"
-              },
-              "servers": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "content": {
-                "type": "string"
-              }
-            }
+            "type": "object"
           }
         }
       }
     },
-    "path_shadowing": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
-      }
+    "unsigned_packages": {
+      "type": "array"
     },
-    "manual_areas": {
+    "path_shadowing": {
       "type": "array",
       "items": {
         "type": "object",
         "required": [
-          "dir",
-          "entries"
+          "basename",
+          "first_hit",
+          "shadowed"
         ],
         "properties": {
-          "dir": {
+          "basename": {
             "type": "string"
           },
-          "entries": {
+          "first_hit": {
+            "type": "string"
+          },
+          "shadowed": {
             "type": "array",
             "items": {
               "type": "string"
@@ -111,6 +112,9 @@
           }
         }
       }
+    },
+    "manual_areas": {
+      "type": "object"
     }
   }
 }

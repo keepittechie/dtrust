@@ -64,6 +64,8 @@ def main():
     tier = report.get("tier") if isinstance(report, dict) else None
     if tier == 2:
         schema_path = root / "templates" / "report.tier2.schema.json"
+    elif tier == 3:
+        schema_path = root / "templates" / "report.tier3.schema.json"
     else:
         schema_path = root / "templates" / "report.schema.json"
     try:
